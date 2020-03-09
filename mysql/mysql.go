@@ -111,7 +111,7 @@ func (r *ayaRepository) GetAyaListFrom(quran_text string, translation string, ay
 	return ayaList
 }
 
-func (r *ayaRepository) GetAyaListBetween(quran_text string, translation string, firstId int, secondId int, inclusive bool) []*paging.AyaModel {
+func (r *ayaRepository) GetAyaListBetween(quran_text string, translation string, firstId paging.AyaNumber, secondId paging.AyaNumber, inclusive bool) []*paging.AyaModel {
 	var ayaList []*paging.AyaModel
 
 	var sign string = "<"

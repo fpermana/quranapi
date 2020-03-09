@@ -20,5 +20,5 @@ type AyaRepository interface {
     GetNumberBySuraAya(quran_text string, suraNumber int, ayaNumber int) AyaNumber; // get number of specified aya and sura
     GetAya(quran_text string, translation string, number AyaNumber) *AyaModel; // get ayamodel by number
     GetAyaListFrom(quran_text string, translation string, number AyaNumber) []*AyaModel; // get aya list from number
-    GetAyaListBetween(quran_text string, translation string, firstId int, secondId int, inclusive bool) []*AyaModel; // get aya list between 2 numbers
+    GetAyaListBetween(quran_text string, translation string, firstId AyaNumber, secondId AyaNumber, inclusive bool) []*AyaModel; // get aya list between 2 numbers
 }
