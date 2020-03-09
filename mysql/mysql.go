@@ -2,7 +2,10 @@ package mysql
 
 import (
 	"fmt"
+	"strconv"
 	"github.com/fpermana/quranapi/paging"
+	"github.com/fpermana/quranapi/searching"
+	"github.com/fpermana/quranapi/quran"
 
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
@@ -94,12 +97,12 @@ func (r *ayaRepository) GetAyaListFrom(quran_text string, translation string, ay
 	defer rows.Close()
 
 	for rows.Next() {
-		var model *paging.AyaModel = new(paging.AyaModel)
 		var number, sura, aya int
 		var text, translation, suraName string
 		if err := rows.Scan(&number, &text, &translation, &sura, &aya, &suraName); err != nil {
 			return nil
 		}
+		var model *paging.AyaModel = new(paging.AyaModel)
 		model.Number = paging.AyaNumber(number)
 		model.Text = text
 		model.Translation = translation
@@ -128,12 +131,12 @@ func (r *ayaRepository) GetAyaListBetween(quran_text string, translation string,
 	defer rows.Close()
 
 	for rows.Next() {
-		var model *paging.AyaModel = new(paging.AyaModel)
 		var number, sura, aya int
 		var text, translation, suraName string
 		if err := rows.Scan(&number, &text, &translation, &sura, &aya, &suraName); err != nil {
 			return nil
 		}
+		var model *paging.AyaModel = new(paging.AyaModel)
 		model.Number = paging.AyaNumber(number)
 		model.Text = text
 		model.Translation = translation
@@ -153,3 +156,100 @@ func NewAyaRepository(db *sql.DB) (paging.AyaRepository, error) {
 
 	return r, nil
 }
+
+type translationRepository struct {
+	db      *sql.DB
+}
+
+func (r *translationRepository) GetTranslationList() []*quran.TranslationModel {
+	var translationList []*quran.TranslationModel
+
+	var query string = fmt.Sprintf("SELECT id, flag, lang, name, translator, tid, installed, is_default, visible, iso6391 FROM translations")
+	// fmt.Println(query, ayaNumber)
+	// Execute the query
+	rows, err := r.db.Query(query)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var number int
+		var flag, lang, name, translator, tid, iso6391 string
+		var installed, is_default, visible bool
+		if err := rows.Scan(&number, &flag, &lang, &name, &translator, &tid, &installed, &is_default, &visible, &iso6391); err != nil {
+			return nil
+		}
+		var model *quran.TranslationModel = new(quran.TranslationModel)
+		model.Number = quran.TranslationNumber(number)
+		model.Flag = flag
+		model.Lang = lang
+		model.Name = name
+		model.Translator = translator
+		model.Tid = tid
+		model.Installed = installed
+		model.IsDefault = is_default
+		model.Visible = visible
+		model.Iso6391 = iso6391
+		translationList = append(translationList, model)
+        }
+	return translationList
+}
+
+// NewTranslationRepository returns a new instance of a MySQL translation repository.
+func NewTranslationRepository(db *sql.DB) (quran.TranslationRepository, error) {
+	r := &translationRepository{
+		db:      db,
+	}
+
+	return r, nil
+}
+
+type searchingRepository struct {
+	db      *sql.DB
+}
+
+func (r *searchingRepository) Search(keywords string, quran_text string, translation string, lastId int, limit int) []*paging.AyaModel {
+	var ayaList []*paging.AyaModel
+
+	var query string = fmt.Sprintf("SELECT %[1]s.id, %[1]s.text, %[2]s.text, %[1]s.sura, %[1]s.aya, suras.name FROM %[1]s JOIN %[2]s ON %[2]s.id = %[1]s.id JOIN suras ON suras.id = %[1]s.sura WHERE %[2]s.text LIKE ? AND %[1]s.id > ? ORDER BY %[1]s.id LIMIT %[3]d", quran_text, translation, limit)
+	//fmt.Println(query)
+	stacks := []string{fmt.Sprintf("%%%[1]s%%",keywords), strconv.Itoa(lastId)}
+	args := make([]interface{}, len(stacks))
+	for i := range stacks {
+		args[i] = stacks[i]
+	}
+
+	// Execute the query
+	rows, err := r.db.Query(query, args...)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var number, sura, aya int
+		var text, translation, suraName string
+		if err := rows.Scan(&number, &text, &translation, &sura, &aya, &suraName); err != nil {
+			return nil
+		}
+		var model *paging.AyaModel = new(paging.AyaModel)
+		model.Number = paging.AyaNumber(number)
+		model.Text = text
+		model.Translation = translation
+		model.Sura = sura
+		model.Aya = aya
+		model.SuraName = suraName
+		ayaList = append(ayaList, model)
+        }
+	return ayaList
+}
+
+// NewSearchingRepository returns a new instance of a MySQL searching repository.
+func NewSearchingRepository(db *sql.DB) (searching.SearchingRepository, error) {
+	r := &searchingRepository{
+		db:      db,
+	}
+
+	return r, nil
+}
+

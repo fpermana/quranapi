@@ -10,7 +10,7 @@ type TranslationModel struct {
 	Lang			string
 	Name			string
 	Translator		string
-	Tid				string
+	Tid			string
 	Installed		bool
 	IsDefault		bool
 	Visible			bool
@@ -21,3 +21,5 @@ type TranslationModel struct {
 type TranslationRepository interface {
     GetTranslationList() []*TranslationModel; // get all translation list
 }
+
+
