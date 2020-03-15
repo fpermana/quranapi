@@ -205,6 +205,70 @@ func NewTranslationRepository(db *sql.DB) (quran.TranslationRepository, error) {
 	return r, nil
 }
 
+type suraRepository struct {
+	db      *sql.DB
+}
+
+func (r *suraRepository) GetSuraList() []*quran.SuraModel {
+	var suraList []*quran.SuraModel
+
+	var query string = fmt.Sprintf("SELECT id, ayas, start, name, tname, ename, type, `order`, rukus FROM suras")
+	// fmt.Println(query, ayaNumber)
+	// Execute the query
+	rows, err := r.db.Query(query)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var number, ayas, start, stype,  order, rukus int
+		var name, tname, ename string
+		if err := rows.Scan(&number, &ayas, &start, &name, &tname, &ename, &stype, &order, &rukus); err != nil {
+			return nil
+		}
+		var model *quran.SuraModel = new(quran.SuraModel)
+		model.Number = quran.SuraNumber(number)
+		model.Ayas = ayas
+		model.Start = start
+		model.Name = name
+		model.TName = tname
+		model.EName = ename
+		model.Type = stype
+		model.Order = order
+		model.Rukus = rukus
+		suraList = append(suraList, model)
+        }
+	return suraList
+}
+
+func (r *suraRepository) GetSuraPage(suraNumber quran.SuraNumber) (int,int,int) {
+	var page, sura, aya int
+	var query string = fmt.Sprintf("SELECT id,sura,aya FROM pages WHERE sura <= ? ORDER BY sura DESC LIMIT 1")
+	// Execute the query
+	rows, err := r.db.Query(query,int(suraNumber))
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := rows.Scan(&page, &sura, &aya); err != nil {
+			return page, sura, aya
+		}
+        }
+
+	return page, sura, aya
+}
+// NewSuraRepository returns a new instance of a MySQL sura repository.
+func NewSuraRepository(db *sql.DB) (quran.SuraRepository, error) {
+	r := &suraRepository{
+		db:      db,
+	}
+
+	return r, nil
+}
+
 type searchingRepository struct {
 	db      *sql.DB
 }

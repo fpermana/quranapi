@@ -11,7 +11,7 @@ type SuraModel struct {
 	Name			string
 	TName			string
 	EName			string
-	Type			string
+	Type			int
 	Order			int
 	Rukus			int
 }
@@ -19,5 +19,5 @@ type SuraModel struct {
 // SuraRepository provides access a sura store.
 type SuraRepository interface {
     GetSuraList() []*SuraModel; // get all sura list
-    GetSuraPage(int SuraNumber) int; //get page where sura started
+    GetSuraPage(suraNumber SuraNumber) (int,int,int); //get page where sura started
 }
