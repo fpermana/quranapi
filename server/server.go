@@ -43,16 +43,16 @@ func New(ps paging.Service, qs quran.Service, ss searching.Service, logger kitlo
 		h := pagingHandler{s.Paging, s.Logger}
 		r.Mount("/v1", h.router())
 	})
-	/*r.Route("/tracking", func(r chi.Router) {
-		h := trackingHandler{s.Tracking, s.Logger}
+	r.Route("/quran", func(r chi.Router) {
+		h := quranHandler{s.Quran, s.Logger}
 		r.Mount("/v1", h.router())
 	})
-	r.Route("/handling", func(r chi.Router) {
-		h := handlingHandler{s.Handling, s.Logger}
+	r.Route("/searching", func(r chi.Router) {
+		h := searchingHandler{s.Searching, s.Logger}
 		r.Mount("/v1", h.router())
 	})
 
-	r.Method("GET", "/metrics", promhttp.Handler())*/
+	//r.Method("GET", "/metrics", promhttp.Handler())*/
 
 	s.router = r
 
