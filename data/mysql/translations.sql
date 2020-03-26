@@ -1,5 +1,15 @@
+--
+-- Database: `quran`
+--
+
+CREATE DATABASE IF NOT EXISTS `quran` CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `quran`;
+
+SET NAMES 'utf8';
+SET CHARACTER SET utf8;
+
 DROP TABLE IF EXISTS translations;
-CREATE TABLE translations (id INTEGER NOT NULL PRIMARY KEY, flag text NOT NULL, lang text NOT NULL, name text NOT NULL, translator text NOT NULL, tid text NOT NULL, installed INTEGER, is_default INTEGER, visible INTEGER, iso6391 text, UNIQUE(tid));
+CREATE TABLE translations (id INTEGER NOT NULL PRIMARY KEY, flag text NOT NULL, lang text NOT NULL, name text NOT NULL, translator text NOT NULL, tid VARCHAR(32) NOT NULL, installed INTEGER, is_default INTEGER, visible INTEGER, iso6391 text, UNIQUE(tid)) ENGINE=MyISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 INSERT INTO translations (id, flag, lang, name, translator, tid, installed, is_default, visible, iso6391) VALUES (1,"al","Albanian","Efendi Nahi","Hasan Efendi Nahi","sq.nahi",0,0,1,"sq");
 INSERT INTO translations (id, flag, lang, name, translator, tid, installed, is_default, visible, iso6391) VALUES (2,"al","Albanian","Feti Mehdiu","Feti Mehdiu","sq.mehdiu",0,0,1,"sq");
