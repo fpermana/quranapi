@@ -52,6 +52,7 @@ func New(ps paging.Service, qs quran.Service, ss searching.Service, logger kitlo
 	})
 
 	//r.Method("GET", "/metrics", promhttp.Handler())*/
+	r.Get("/", landing)
 
 	s.router = r
 
@@ -74,6 +75,10 @@ func accessControl(h http.Handler) http.Handler {
 
 		h.ServeHTTP(w, r)
 	})
+}
+
+func landing(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("QuranAPI"))
 }
 
 func encodeError(_ context.Context, err error, w http.ResponseWriter) {
