@@ -10,7 +10,7 @@ import (
 // Service is the interface that provides quran methods.
 type Service interface {
 	GetTranslations() ([]*TranslationModel, error)
-	GetSuraPage(suraNumber SuraNumber) int
+	GetSuraPage(suraNumber int) (int, error)
 }
 
 type service struct {
@@ -24,15 +24,14 @@ func (s *service) GetTranslations() ([]*TranslationModel, error) {
 	return translationList, nil
 }
 
-func (s *service) GetSuraPage(suraNumber SuraNumber) int {
-	var currentPage, currentSura, currentAya int = s.suras.GetSuraPage(suraNumber)
+func (s *service) GetSuraPage(suraNumber int) (int, error) {
+	var currentPage, currentSura, currentAya int = s.suras.GetSuraPage(SuraNumber(suraNumber))
 
-	var cSuraNumber SuraNumber = SuraNumber(currentSura)
-	if cSuraNumber == suraNumber && currentAya > 1 {
+	if currentSura == suraNumber && currentAya > 1 {
 		currentPage--
 	}
 
-	return  currentPage
+	return  currentPage, nil
 }
 
 func NewService(tr TranslationRepository, sr SuraRepository) Service {

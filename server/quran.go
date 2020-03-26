@@ -2,8 +2,10 @@ package server
 
 import (
 	//"context"
-	//"encoding/json"
+	"encoding/json"
 	"net/http"
+	"net/url"
+	"strconv"
 	//"time"
 	//"fmt"
 
@@ -34,36 +36,49 @@ func (h *quranHandler) router() chi.Router {
 
 	})*/
 	//r.Get("/locations", h.listLocations)
-	r.Get("/", h.getPage)
+	r.Get("/translations", h.getTranslations)
+	r.Get("/sura-page", h.getSuraPage)
 
 	//r.Method("GET", "/docs", http.StripPrefix("/booking/v1/docs", http.FileServer(http.Dir("booking/docs"))))
 
 	return r
 }
 
-func (h *quranHandler) getPage(w http.ResponseWriter, r *http.Request) {
-	//fmt.Fprintf(w, "Hello World")
-	/*ctx := context.Background()
+func (h *quranHandler) getTranslations(w http.ResponseWriter, r *http.Request) {
 
-	trackingID := shipping.TrackingID(chi.URLParam(r, "trackingID"))
-
-	c, err := h.s.LoadCargo(trackingID)
-	if err != nil {
-		encodeError(ctx, err, w)
-		return
-	}
-
-	var response = struct {
-		Cargo booking.Cargo `json:"cargo"`
-	}{
-		Cargo: c,
-	}
-
+	translationList, _ := h.s.GetTranslations()
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	if err := json.NewEncoder(w).Encode(response); err != nil {
+	if err := json.NewEncoder(w).Encode(translationList); err != nil {
 		h.logger.Log("error", err)
-		encodeError(ctx, err, w)
+		//encodeError(ctx, err, w)
 		return
-	}*/
+	}
+}
+
+func (h *quranHandler) getSuraPage(w http.ResponseWriter, r *http.Request) {
+	id := 0
+	u := r.URL
+	if u.RawQuery != "" {
+		m, err := url.ParseQuery(u.RawQuery)
+		if err == nil {
+			for k, v := range m {
+				switch k {
+				case "id":
+					id, _ = strconv.Atoi(v[0])
+				}
+			}
+		}
+	}
+
+	if id <= 0 {
+		return
+	}
+	page, _ := h.s.GetSuraPage(id)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	if err := json.NewEncoder(w).Encode(page); err != nil {
+		h.logger.Log("error", err)
+		//encodeError(ctx, err, w)
+		return
+	}
 }
 

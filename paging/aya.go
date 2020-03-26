@@ -5,13 +5,13 @@ type AyaNumber int
 
 // Aya is the central class in the domain model.
 type AyaModel struct {
-	Number			AyaNumber
-	Text			string
-	Translation		string
-	Aya			int
-	Sura			int
-	SuraName		string
-	Marked			bool
+	Number			AyaNumber	`json:"id"`
+	Text			string		`json:"text"`
+	Translation		string		`json:"translation"`
+	Aya			int		`json:"aya"`
+	Sura			int		`json:"sura"`
+	SuraName		string		`json:"sura_name"`
+	Marked			bool		`json:"marked"`
 }
 
 // AyaRepository provides access a aya store.

@@ -2,8 +2,10 @@ package server
 
 import (
 	//"context"
-	//"encoding/json"
+	"encoding/json"
 	"net/http"
+	"net/url"
+	"strconv"
 	//"time"
 	//"fmt"
 
@@ -34,7 +36,7 @@ func (h *pagingHandler) router() chi.Router {
 
 	})*/
 	//r.Get("/locations", h.listLocations)
-	r.Get("/", h.getPage)
+	r.Get("/{page}", h.getPage)
 
 	//r.Method("GET", "/docs", http.StripPrefix("/booking/v1/docs", http.FileServer(http.Dir("booking/docs"))))
 
@@ -42,28 +44,33 @@ func (h *pagingHandler) router() chi.Router {
 }
 
 func (h *pagingHandler) getPage(w http.ResponseWriter, r *http.Request) {
-	//fmt.Fprintf(w, "Hello World")
-	/*ctx := context.Background()
-
-	trackingID := shipping.TrackingID(chi.URLParam(r, "trackingID"))
-
-	c, err := h.s.LoadCargo(trackingID)
+	page, err := strconv.Atoi(chi.URLParam(r, "page"))
 	if err != nil {
-		encodeError(ctx, err, w)
 		return
 	}
-
-	var response = struct {
-		Cargo booking.Cargo `json:"cargo"`
-	}{
-		Cargo: c,
+	quran_text := "quran_text_original"
+	translation := "id_indonesian"
+	u := r.URL
+	if u.RawQuery != "" {
+		m, err := url.ParseQuery(u.RawQuery)
+		if err == nil {
+			for k, v := range m {
+				switch k {
+				case "quran_text":
+					quran_text = v[0]
+				case "translation":
+					translation = v[0]
+				}
+			}
+		}
 	}
 
+	ayaList, _ := h.s.GetPage(page, quran_text, translation)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	if err := json.NewEncoder(w).Encode(response); err != nil {
+	if err := json.NewEncoder(w).Encode(ayaList); err != nil {
 		h.logger.Log("error", err)
-		encodeError(ctx, err, w)
+		//encodeError(ctx, err, w)
 		return
-	}*/
+	}
 }
 

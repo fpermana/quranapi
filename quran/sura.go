@@ -5,15 +5,15 @@ type SuraNumber int
 
 // Aya is the central class in the domain model.
 type SuraModel struct {
-	Number			SuraNumber
-	Ayas			int
-	Start			int
-	Name			string
-	TName			string
-	EName			string
-	Type			int
-	Order			int
-	Rukus			int
+	Number			SuraNumber	`json:"id"`
+	Ayas			int		`json:"ayas"`
+	Start			int		`json:"start"`
+	Name			string		`json:"name"`
+	TName			string		`json:"tname"`
+	EName			string		`json:"ename"`
+	Type			int		`json:"type"`
+	Order			int		`json:"order"`
+	Rukus			int		`json:"rukus"`
 }
 
 // SuraRepository provides access a sura store.

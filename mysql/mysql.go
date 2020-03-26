@@ -243,8 +243,17 @@ func (r *suraRepository) GetSuraList() []*quran.SuraModel {
 }
 
 func (r *suraRepository) GetSuraPage(suraNumber quran.SuraNumber) (int,int,int) {
+	var cnt int = 0
+	_ = r.db.QueryRow("SELECT count(*) FROM pages WHERE sura = ?", int(suraNumber)).Scan(&cnt)
+
 	var page, sura, aya int
-	var query string = fmt.Sprintf("SELECT id,sura,aya FROM pages WHERE sura <= ? ORDER BY sura DESC LIMIT 1")
+	var query string
+	if cnt == 0 {
+		query = fmt.Sprintf("SELECT id,sura,aya FROM pages WHERE sura <= ? ORDER BY sura DESC LIMIT 1")
+	} else {
+		query = fmt.Sprintf("SELECT id,sura,aya FROM pages WHERE sura = ? ORDER BY sura ASC LIMIT 1")
+	}
+	//fmt.Println(query, int(suraNumber))
 	// Execute the query
 	rows, err := r.db.Query(query,int(suraNumber))
 	if err != nil {

@@ -26,7 +26,7 @@ func (s *loggingService) GetTranslations() ([]*TranslationModel, error) {
         return s.next.GetTranslations()
 }
 
-func (s *loggingService) GetSuraPage(suraNumber SuraNumber) int {
+func (s *loggingService) GetSuraPage(suraNumber int) (int, error) {
 	defer func(begin time.Time) {
 		s.logger.Log(
 			"method", "GetSuraPage",
