@@ -71,7 +71,6 @@ func main() {
 	httpAddr := ":7878"
 
 	srv := server.New(ps, qs, ss, log.With(logger, "component", "http"))
-	fmt.Println(srv)
         errs := make(chan error, 2)
         go func() {
 		logger.Log("transport", "http", "address", httpAddr, "msg", "listening")

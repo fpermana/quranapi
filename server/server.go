@@ -9,7 +9,6 @@ import (
 	kitlog "github.com/go-kit/kit/log"
 	//"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	//shipping "github.com/marcusolsson/goddd"
 	"github.com/fpermana/quranapi/paging"
 	"github.com/fpermana/quranapi/quran"
 	"github.com/fpermana/quranapi/searching"
