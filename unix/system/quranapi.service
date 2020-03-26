@@ -1,0 +1,14 @@
+[Unit]
+Description=Quran API
+After=network.target
+
+[Service]
+Type=simple
+#Restart=always
+#RestartSec=5s
+PIDFile=/run/go/quranapi.pid
+ExecStart=/root/go/src/github.com/fpermana/quranapi/bin/quranapi
+ExecReload=/bin/kill -USR2 $MAINPID
+
+[Install]
+WantedBy=multi-user.target
