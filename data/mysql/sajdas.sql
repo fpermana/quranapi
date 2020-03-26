@@ -1,0 +1,17 @@
+DROP TABLE IF EXISTS sajdas;
+CREATE TABLE sajdas (id int(2) NOT NULL PRIMARY KEY, sura int(3) NOT NULL default 0, aya int(3) NOT NULL default 0, type text NOT NULL);
+insert into sajdas (id,sura,aya,type) values (1,7,206,"recommended");
+insert into sajdas (id,sura,aya,type) values (2,13,15,"recommended");
+insert into sajdas (id,sura,aya,type) values (3,16,50,"recommended");
+insert into sajdas (id,sura,aya,type) values (4,17,109,"recommended");
+insert into sajdas (id,sura,aya,type) values (5,19,58,"recommended");
+insert into sajdas (id,sura,aya,type) values (6,22,18,"recommended");
+insert into sajdas (id,sura,aya,type) values (7,22,77,"recommended");
+insert into sajdas (id,sura,aya,type) values (8,25,60,"recommended");
+insert into sajdas (id,sura,aya,type) values (9,27,26,"recommended");
+insert into sajdas (id,sura,aya,type) values (10,32,15,"obligatory");
+insert into sajdas (id,sura,aya,type) values (11,38,24,"recommended");
+insert into sajdas (id,sura,aya,type) values (12,41,38,"obligatory");
+insert into sajdas (id,sura,aya,type) values (13,53,62,"obligatory");
+insert into sajdas (id,sura,aya,type) values (14,84,21,"recommended");
+insert into sajdas (id,sura,aya,type) values (15,96,19,"obligatory");
