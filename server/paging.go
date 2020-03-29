@@ -37,6 +37,7 @@ func (h *pagingHandler) router() chi.Router {
 	})*/
 	//r.Get("/locations", h.listLocations)
 	r.Get("/{page}", h.getPage)
+	r.Get("/total", h.getTotalPage)
 
 	//r.Method("GET", "/docs", http.StripPrefix("/booking/v1/docs", http.FileServer(http.Dir("booking/docs"))))
 
@@ -68,6 +69,17 @@ func (h *pagingHandler) getPage(w http.ResponseWriter, r *http.Request) {
 	ayaList, _ := h.s.GetPage(page, quran_text, translation)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	if err := json.NewEncoder(w).Encode(ayaList); err != nil {
+		h.logger.Log("error", err)
+		//encodeError(ctx, err, w)
+		return
+	}
+}
+
+func (h *pagingHandler) getTotalPage(w http.ResponseWriter, r *http.Request) {
+
+	totalPage, _ := h.s.GetTotalPage()
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	if err := json.NewEncoder(w).Encode(totalPage); err != nil {
 		h.logger.Log("error", err)
 		//encodeError(ctx, err, w)
 		return

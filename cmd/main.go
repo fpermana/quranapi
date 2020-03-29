@@ -46,18 +46,20 @@ func main() {
 	// Setup repositories
 	var (
 		ayas		paging.AyaRepository
+		pages		paging.PageRepository
 		translations	quran.TranslationRepository
 		suras		quran.SuraRepository
 		searchings	searching.SearchingRepository
 	)
 
 	ayas, _ = mysql.NewAyaRepository(db)
+	pages, _ = mysql.NewPageRepository(db)
 	translations, _ = mysql.NewTranslationRepository(db)
 	suras, _ = mysql.NewSuraRepository(db)
 	searchings, _ = mysql.NewSearchingRepository(db)
 
 	var ps paging.Service
-	ps = paging.NewService(ayas)
+	ps = paging.NewService(ayas,pages)
 	ps = paging.NewLoggingService(logger,ps)
 
 	var qs quran.Service

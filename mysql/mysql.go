@@ -15,27 +15,6 @@ type ayaRepository struct {
 	db      *sql.DB
 }
 
-func (r *ayaRepository) GetSuraAyaStart(pageNumber int) (int,int) {
-
-	var sura, aya int
-	var query string = fmt.Sprintf("SELECT sura, aya FROM pages WHERE id = ?")
-	// Execute the query
-	rows, err := r.db.Query(query, pageNumber)
-	if err != nil {
-	    // panic(err.Error()) // proper error handling instead of panic in your app
-	    return -1,-1
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		if err := rows.Scan(&sura, &aya); err != nil {
-			return -1,-1
-		}
-	}
-
-	return sura, aya
-}
-
 func (r *ayaRepository) GetNumberBySuraAya(quran_text string, suraNumber int, ayaNumber int) paging.AyaNumber {
 	var number int
 	var query string = fmt.Sprintf("SELECT id FROM %[1]s WHERE sura = ? AND aya = ?", quran_text)
@@ -151,6 +130,47 @@ func (r *ayaRepository) GetAyaListBetween(quran_text string, translation string,
 // NewAyaRepository returns a new instance of a MySQL aya repository.
 func NewAyaRepository(db *sql.DB) (paging.AyaRepository, error) {
 	r := &ayaRepository{
+		db:      db,
+	}
+
+	return r, nil
+}
+
+type pageRepository struct {
+	db      *sql.DB
+}
+
+func (r *pageRepository) GetSuraAyaStart(pageNumber int) (int,int) {
+
+	var sura, aya int
+	var query string = fmt.Sprintf("SELECT sura, aya FROM pages WHERE id = ?")
+	// Execute the query
+	rows, err := r.db.Query(query, pageNumber)
+	if err != nil {
+	    // panic(err.Error()) // proper error handling instead of panic in your app
+	    return -1,-1
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := rows.Scan(&sura, &aya); err != nil {
+			return -1,-1
+		}
+	}
+
+	return sura, aya
+}
+
+func (r *pageRepository) GetTotalPage() int {
+	var pages int = 0
+	_ = r.db.QueryRow("SELECT count(*) FROM pages").Scan(&pages)
+
+	return pages;
+}
+
+// NewPageRepository returns a new instance of a MySQL page repository.
+func NewPageRepository(db *sql.DB) (paging.PageRepository, error) {
+	r := &pageRepository{
 		db:      db,
 	}
 

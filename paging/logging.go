@@ -29,3 +29,13 @@ func (s *loggingService) GetPage(page int, quran_text string, translation string
         return s.next.GetPage(page, quran_text, translation)
 }
 
+func (s *loggingService) GetTotalPage() (int, error) {
+	defer func(begin time.Time) {
+		s.logger.Log(
+			"method", "GetTotalPage",
+			"took", time.Since(begin),
+		)
+	}(time.Now())
+        return s.next.GetTotalPage()
+}
+
