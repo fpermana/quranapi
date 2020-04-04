@@ -19,5 +19,5 @@ type SuraModel struct {
 // SuraRepository provides access a sura store.
 type SuraRepository interface {
     GetSuraList() []*SuraModel; // get all sura list
-    GetSuraPage(suraNumber SuraNumber) (int,int,int); //get page where sura started
+    GetSuraPage(suraNumber SuraNumber) int; //get page where sura started
 }

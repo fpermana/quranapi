@@ -25,11 +25,7 @@ func (s *service) GetTranslations() ([]*TranslationModel, error) {
 }
 
 func (s *service) GetSuraPage(suraNumber int) (int, error) {
-	var currentPage, currentSura, currentAya int = s.suras.GetSuraPage(SuraNumber(suraNumber))
-
-	if currentSura == suraNumber && currentAya > 1 {
-		currentPage--
-	}
+	var currentPage int = s.suras.GetSuraPage(SuraNumber(suraNumber))
 
 	return  currentPage, nil
 }

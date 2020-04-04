@@ -262,20 +262,13 @@ func (r *suraRepository) GetSuraList() []*quran.SuraModel {
 	return suraList
 }
 
-func (r *suraRepository) GetSuraPage(suraNumber quran.SuraNumber) (int,int,int) {
-	var cnt int = 0
-	_ = r.db.QueryRow("SELECT count(*) FROM pages WHERE sura = ?", int(suraNumber)).Scan(&cnt)
-
+func (r *suraRepository) GetSuraPage(suraNumber quran.SuraNumber) int {
 	var page, sura, aya int
-	var query string
-	if cnt == 0 {
-		query = fmt.Sprintf("SELECT id,sura,aya FROM pages WHERE sura <= ? ORDER BY sura DESC LIMIT 1")
-	} else {
-		query = fmt.Sprintf("SELECT id,sura,aya FROM pages WHERE sura = ? ORDER BY sura ASC LIMIT 1")
-	}
+	var query string = fmt.Sprintf("SELECT id,sura,aya FROM pages WHERE sura >= ? ORDER BY sura ASC LIMIT 1")
 	//fmt.Println(query, int(suraNumber))
 	// Execute the query
-	rows, err := r.db.Query(query,int(suraNumber))
+	var oSura = int(suraNumber)
+	rows, err := r.db.Query(query,oSura)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -283,11 +276,13 @@ func (r *suraRepository) GetSuraPage(suraNumber quran.SuraNumber) (int,int,int) 
 
 	for rows.Next() {
 		if err := rows.Scan(&page, &sura, &aya); err != nil {
-			return page, sura, aya
+            if sura > oSura || (sura == oSura && aya > 1) {
+                page--
+            }
 		}
-        }
+	}
 
-	return page, sura, aya
+	return page
 }
 // NewSuraRepository returns a new instance of a MySQL sura repository.
 func NewSuraRepository(db *sql.DB) (quran.SuraRepository, error) {
